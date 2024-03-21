@@ -1,28 +1,28 @@
-import React from "react";
-import { useFormik } from "formik";
-import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
-import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField } from "@mui/material";
-import { useAppDispatch } from "common/hooks";
-import { selectIsLoggedIn } from "features/auth/auth.selectors";
-import { authThunks } from "features/auth/auth.reducer";
+import React from "react"
+import { useFormik } from "formik"
+import { useSelector } from "react-redux"
+import { Navigate } from "react-router-dom"
+import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField } from "@mui/material"
+import { useAppDispatch } from "common/hooks"
+import { selectIsLoggedIn } from "features/auth/auth.selectors"
+import { authThunks } from "features/auth/auth.reducer"
 
 export const Login = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const isLoggedIn = useSelector(selectIsLoggedIn)
 
   const formik = useFormik({
     validate: (values) => {
       if (!values.email) {
         return {
           email: "Email is required",
-        };
+        }
       }
       if (!values.password) {
         return {
           password: "Password is required",
-        };
+        }
       }
     },
     initialValues: {
@@ -31,12 +31,15 @@ export const Login = () => {
       rememberMe: false,
     },
     onSubmit: (values) => {
-      dispatch(authThunks.login(values));
+      dispatch(authThunks.login(values))
+        .unwrap()
+        .then((res) => {})
+        .catch((err) => {})
     },
-  });
+  })
 
   if (isLoggedIn) {
-    return <Navigate to={"/"} />;
+    return <Navigate to={"/"} />
   }
 
   return (
@@ -72,5 +75,5 @@ export const Login = () => {
         </form>
       </Grid>
     </Grid>
-  );
-};
+  )
+}
