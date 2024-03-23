@@ -20,6 +20,7 @@ import { selectIsLoggedIn } from "features/auth/auth.selectors"
 import { selectAppStatus, selectIsInitialized } from "app/app.selectors"
 import { authThunks } from "features/auth/auth.reducer"
 import { useActions } from "common/hooks/useActions"
+import { appActions } from "app/app.reducer"
 
 function App() {
   const status = useSelector(selectAppStatus)
@@ -27,7 +28,10 @@ function App() {
   const isLoggedIn = useSelector(selectIsLoggedIn)
 
   // const dispatch = useAppDispatch()
+  // применяя хук избавляемся от dispatch
   const { initializeApp, logout } = useActions(authThunks)
+  // в хук useActions также можно обернуть не только санку, но и экшон, например:
+  const { setAppStatus } = useActions(appActions)
 
   useEffect(() => {
     // dispatch(authThunks.initializeApp())
