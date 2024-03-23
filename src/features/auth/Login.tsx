@@ -35,12 +35,14 @@ export const Login = () => {
       dispatch(authThunks.login(values))
         .unwrap() //это для того чтобы поймать ошибку в  .catch
         .then((res) => {}) //если обрабатываем тоько ошибку, то .then не нужет, можно опустить
-        .catch((res: BaseResponseType) => {
+        .catch((err: BaseResponseType) => {
           //сюда в ошибку res приходит return rejectWithValue(res.data) из login из auth.reducer.ts
           // formikHelpers.setFieldError(res.fieldsErrors[0].field, res.fieldsErrors[0].error)
-          res.fieldsErrors.forEach((el) => {
-            formikHelpers.setFieldError(el.field, el.error)
-          })
+          if (err.fieldsErrors) {
+            err.fieldsErrors.forEach((el) => {
+              formikHelpers.setFieldError(el.field, el.error)
+            })
+          }
         })
     },
   })
