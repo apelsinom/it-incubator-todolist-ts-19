@@ -18,9 +18,7 @@ import { TodolistsList } from "features/TodolistsList/TodolistsList"
 import { ErrorSnackbar } from "common/components"
 import { selectIsLoggedIn } from "features/auth/auth.selectors"
 import { selectAppStatus, selectIsInitialized } from "app/app.selectors"
-import { authThunks } from "features/auth/auth.reducer"
 import { useActions } from "common/hooks/useActions"
-import { appActions } from "app/app.reducer"
 
 function App() {
   const status = useSelector(selectAppStatus)
@@ -29,9 +27,11 @@ function App() {
 
   // const dispatch = useAppDispatch()
   // применяя хук избавляемся от dispatch
-  const { initializeApp, logout } = useActions(authThunks)
+  // const { initializeApp, logout } = useActions(authThunks)
   // в хук useActions также можно обернуть не только санку, но и экшон, например:
-  const { setAppStatus } = useActions(appActions)
+  // const { setAppStatus } = useActions(appActions)
+  // Рефактор синтаксиса useActions
+  const { initializeApp, logout } = useActions()
 
   useEffect(() => {
     // dispatch(authThunks.initializeApp())
