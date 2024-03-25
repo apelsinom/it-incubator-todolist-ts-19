@@ -9,7 +9,7 @@ import {
   UpdateTaskArgType,
   UpdateTaskModelType,
 } from "features/TodolistsList/todolists.api"
-import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from "common/utils"
+import { createAppAsyncThunk, handleServerAppError } from "common/utils"
 import { ResultCode, TaskPriorities, TaskStatuses } from "common/enums"
 import { clearTasksAndTodolists } from "common/actions"
 import { thunkTryCatch } from "common/utils/thunkTryCatch"
@@ -147,6 +147,21 @@ const removeTask = createAppAsyncThunk<RemoveTaskArgType, RemoveTaskArgType>(
   "tasks/removeTask",
   async (arg, thunkAPI) => {
     const { dispatch, rejectWithValue } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
+      const res = await todolistsApi.deleteTask(arg)
+      if (res.data.resultCode === ResultCode.Success) {
+        return arg
+      } else {
+        handleServerAppError(res.data, dispatch)
+        return rejectWithValue(null)
+      }
+    })
+  },
+)
+/*const removeTask = createAppAsyncThunk<RemoveTaskArgType, RemoveTaskArgType>(
+  "tasks/removeTask",
+  async (arg, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI
     try {
       dispatch(appActions.setAppStatus({ status: "loading" }))
       const res = await todolistsApi.deleteTask(arg)
@@ -162,7 +177,7 @@ const removeTask = createAppAsyncThunk<RemoveTaskArgType, RemoveTaskArgType>(
       return rejectWithValue(null)
     }
   },
-)
+)*/
 
 const initialState: TasksStateType = {}
 
