@@ -17,6 +17,17 @@ import { thunkTryCatch } from "common/utils/thunkTryCatch"
 const fetchTasks = createAppAsyncThunk<{ tasks: TaskType[]; todolistId: string }, string>(
   "tasks/fetchTasks",
   async (todolistId, thunkAPI) => {
+    return thunkTryCatch(thunkAPI, async () => {
+      const res = await todolistsApi.getTasks(todolistId)
+      const tasks = res.data.items
+      return { tasks, todolistId }
+    })
+  },
+)
+/*
+const fetchTasks = createAppAsyncThunk<{ tasks: TaskType[]; todolistId: string }, string>(
+  "tasks/fetchTasks",
+  async (todolistId, thunkAPI) => {
     const { dispatch, rejectWithValue } = thunkAPI
     try {
       dispatch(appActions.setAppStatus({ status: "loading" }))
@@ -30,6 +41,7 @@ const fetchTasks = createAppAsyncThunk<{ tasks: TaskType[]; todolistId: string }
     }
   },
 )
+*/
 
 const addTask = createAppAsyncThunk<{ task: TaskType }, AddTaskArgType>("tasks/addTask", async (arg, thunkAPI) => {
   const { dispatch, rejectWithValue } = thunkAPI
