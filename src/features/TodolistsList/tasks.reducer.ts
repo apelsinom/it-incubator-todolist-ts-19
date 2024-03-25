@@ -79,15 +79,13 @@ const updateTask = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
   "tasks/updateTask",
   async (arg, thunkAPI) => {
     const { dispatch, rejectWithValue, getState } = thunkAPI
-    try {
-      dispatch(appActions.setAppStatus({ status: "loading" }))
+    return thunkTryCatch(thunkAPI, async () => {
       const state = getState()
       const task = state.tasks[arg.todolistId].find((t) => t.id === arg.taskId)
       if (!task) {
         dispatch(appActions.setAppError({ error: "Task not found in the state" }))
         return rejectWithValue(null)
       }
-
       const apiModel: UpdateTaskModelType = {
         deadline: task.deadline,
         description: task.description,
@@ -97,7 +95,38 @@ const updateTask = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
         status: task.status,
         ...arg.domainModel,
       }
-
+      const res = await todolistsApi.updateTask(arg.todolistId, arg.taskId, apiModel)
+      if (res.data.resultCode === ResultCode.Success) {
+        return arg
+      } else {
+        handleServerAppError(res.data, dispatch)
+        return rejectWithValue(null)
+      }
+    })
+  },
+)
+/*
+const updateTask = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
+  "tasks/updateTask",
+  async (arg, thunkAPI) => {
+    const { dispatch, rejectWithValue, getState } = thunkAPI
+    try {
+      dispatch(appActions.setAppStatus({ status: "loading" }))
+      const state = getState()
+      const task = state.tasks[arg.todolistId].find((t) => t.id === arg.taskId)
+      if (!task) {
+        dispatch(appActions.setAppError({ error: "Task not found in the state" }))
+        return rejectWithValue(null)
+      }
+      const apiModel: UpdateTaskModelType = {
+        deadline: task.deadline,
+        description: task.description,
+        priority: task.priority,
+        startDate: task.startDate,
+        title: task.title,
+        status: task.status,
+        ...arg.domainModel,
+      }
       const res = await todolistsApi.updateTask(arg.todolistId, arg.taskId, apiModel)
       if (res.data.resultCode === ResultCode.Success) {
         dispatch(appActions.setAppStatus({ status: "succeeded" }))
@@ -112,6 +141,7 @@ const updateTask = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
     }
   },
 )
+*/
 
 const removeTask = createAppAsyncThunk<RemoveTaskArgType, RemoveTaskArgType>(
   "tasks/removeTask",
